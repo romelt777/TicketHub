@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure.Storage.Queues;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace TicketHub.Controllers
@@ -23,14 +25,34 @@ namespace TicketHub.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(TicketOrder ticketOrder)
-        {
+        public  async Task<IActionResult> Post(TicketOrder ticketOrder)
+        {            
+            //// 1. validate order
             //using model state
             if (ModelState.IsValid == false)
             {
                 return BadRequest(ModelState);
             }
 
+            // 2 . post order to azure storage queue
+
+            string queueName = "tickethubqueue";
+
+            // Get connection string from secrets.json
+            string? connectionString = _configuration["AzureStorageConnectionString"];
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                return BadRequest("An error was encountered: Empty Connection String");
+            }
+
+            QueueClient queueClient = new QueueClient(connectionString, queueName);
+
+            // serialize an object to json
+            string order = JsonSerializer.Serialize(ticketOrder);
+
+            // send string message to queue
+            await queueClient.SendMessageAsync(order);
 
             return Ok("POSTING from tickets controller: " + ticketOrder.Name);
         }
