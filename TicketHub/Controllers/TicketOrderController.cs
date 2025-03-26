@@ -54,9 +54,7 @@ namespace TicketHub.Controllers
             // send string message to queue
             await queueClient.SendMessageAsync(order);
 
-            return Ok("POSTING from tickets controller: " + ticketOrder.Name);
+            return Ok(ticketOrder.Name + ", your ticket order was sent to storage queue.");
         }
-
-
     }
 }
