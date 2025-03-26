@@ -21,7 +21,7 @@ namespace TicketHub.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok("Hello from tickets controller");
+            return Ok("Get Request Sucess from the tickets controller");
         }
 
         [HttpPost]
