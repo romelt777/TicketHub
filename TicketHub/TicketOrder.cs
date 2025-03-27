@@ -20,7 +20,7 @@ namespace TicketHub
 
         //phone
         [Required(ErrorMessage = "Phone is required")]
-        [RegularExpression(@"^\d{10}$", ErrorMessage = "Invalid Phone Number: must be 10 to 11 digits long")]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Invalid Phone Number: must be 10 digits long")]
         public string Phone { get; set; } = string.Empty;
 
         //quantity
