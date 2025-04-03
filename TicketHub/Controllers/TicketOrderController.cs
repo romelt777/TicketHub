@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace TicketHub.Controllers
 {
@@ -49,10 +50,11 @@ namespace TicketHub.Controllers
             QueueClient queueClient = new QueueClient(connectionString, queueName);
 
             // serialize an object to json
-            string order = JsonSerializer.Serialize(ticketOrder);
+            string message = JsonSerializer.Serialize(ticketOrder);
 
-            // send string message to queue
-            await queueClient.SendMessageAsync(order);
+            // send string message to queue (must encode as base64 to work properly)
+            var plainTextBytes = Encoding.UTF8.GetBytes(message);
+            await queueClient.SendMessageAsync(Convert.ToBase64String(plainTextBytes));
 
             return Ok(ticketOrder.Name + ", your ticket order was sent to storage queue.");
         }
